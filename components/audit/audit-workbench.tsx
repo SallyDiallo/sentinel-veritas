@@ -32,25 +32,37 @@ import {
   getModeDefaults,
   industryPresets,
   scanStages,
-  severityMethodologyEntries,
-  severityMethodologyTitle,
   testSuites,
 } from "./mock-audit";
-import {
-  type AuditResultsNotice,
-  AuditResultsDashboard,
-} from "./audit-results-dashboard";
+import type { AuditResultsNotice } from "./audit-results-dashboard";
+import { AuditResultsSimplified } from "./audit-results-simplified";
 import {
   clearAuditHistory,
   readAuditHistory,
   saveAuditHistoryEntry,
 } from "@/lib/client/audit-history";
+import { saveAuditReport } from "@/lib/client/audit-report-store";
 import {
   PrimaryButton,
   SecondaryButton,
 } from "@/components/site/action-buttons";
 import { cn } from "@/components/site/cn";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/site/motion-system";
+
+const attackMessages = [
+  "Injecting OCR hidden command layer...",
+  "Decoding Base64 adversarial payload...",
+  "Probing visual prompt injection surface...",
+  "Testing adversarial noise boundaries...",
+  "Evaluating policy override resistance...",
+  "Mapping role confusion attack vectors...",
+  "Scanning metadata instruction channels...",
+  "Validating system prompt extraction defense...",
+  "Stress-testing unicode homoglyph filters...",
+  "Tracing tool function misuse paths...",
+  "Cross-referencing multi-modal inputs...",
+  "Compiling vulnerability evidence chain...",
+];
 
 type AuditPhase = "configure" | "scanning" | "results";
 type LiveAuditResponse = Partial<AuditResult> & {
@@ -96,7 +108,6 @@ export function AuditWorkbench({
   const [liveAuditAvailable, setLiveAuditAvailable] = useState(
     initialHasLiveAudit,
   );
-  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [recentAudits, setRecentAudits] = useState<AuditHistoryEntry[]>([]);
 
   const deferredPrompt = useDeferredValue(connection.systemPrompt);
@@ -193,6 +204,7 @@ export function AuditWorkbench({
             result: nextResult,
           }),
         );
+        saveAuditReport({ result: nextResult, config: submittedConfig });
       }
 
       setResult(nextResult);
@@ -375,117 +387,6 @@ export function AuditWorkbench({
     setSubmittedConfig(null);
     setValidationMessage(null);
     setResultNotice(null);
-  };
-
-  const exportReport = () => {
-    if (!result || !submittedConfig) {
-      return;
-    }
-
-    const preset = industryPresets.find(
-      (item) => item.id === submittedConfig.industry,
-    )!;
-    const report = [
-      `Sentinel Veritas Vulnerability Report`,
-      ``,
-      `Session: ${result.sessionId}`,
-      `Completed: ${result.completedAt}`,
-      `Execution Mode: ${getExecutionModeLabel(result.mode)}`,
-      `Provider: ${getAuditProviderLabel(result.provider)}`,
-      `Model Used: ${result.modelUsed}`,
-      `Tests Executed: ${result.testsExecuted}`,
-      `Timestamp: ${result.timestamp}`,
-      `Industry: ${preset.label}`,
-      `Audit Route: ${getAuditRouteLabel(submittedConfig.mode)}`,
-      `Endpoint: ${submittedConfig.endpoint}`,
-      `Configured Model: ${submittedConfig.model}`,
-      `Mode Explanation: ${executionModeExplanation}`,
-      ``,
-      `Vulnerability Index: ${result.vulnerabilityIndex}`,
-      `Overall Severity: ${result.overallSeverity}`,
-      `Passed Tests: ${result.passedTests}`,
-      `Failed Tests: ${result.failedTests}`,
-      `Top Risk Categories: ${
-        result.topRiskCategories.length
-          ? result.topRiskCategories.join(", ")
-          : "None"
-      }`,
-      ``,
-      `Executive Summary`,
-      `Risk Summary: ${result.executiveSummary.riskSummary}`,
-      `Top 3 Weaknesses`,
-      ...result.executiveSummary.topWeaknesses.map(
-        (weakness) => `- ${weakness}`,
-      ),
-      `Business Impact: ${result.executiveSummary.businessImpact}`,
-      `Recommended Next Actions`,
-      ...result.executiveSummary.nextActions.map((action) => `- ${action}`),
-      ``,
-      `Category Breakdown`,
-      ...result.categoryBreakdown.map(
-        (item) =>
-          `- ${item.category}: ${item.failedTests} failed / ${item.passedTests} passed / ${item.totalTests} total (${item.highestSeverity})`,
-      ),
-      ``,
-      `Findings`,
-      ...result.findings.flatMap((finding) => [
-        `- ${finding.testName} [${finding.category}] :: ${finding.status.toUpperCase()} / ${finding.severity}`,
-        `  Payload: ${finding.payload}`,
-        `  Expected Safe Behavior: ${finding.expectedSafeBehavior}`,
-        `  Model Response Excerpt: ${finding.modelResponseExcerpt}`,
-        `  Evidence: ${finding.evidence}`,
-        `  Remediation: ${finding.remediation}`,
-      ]),
-      ``,
-      `Remediation Recommendations`,
-      ...result.remediationRecommendations.map(
-        (recommendation) => `- ${recommendation}`,
-      ),
-      ``,
-      severityMethodologyTitle,
-      ...severityMethodologyEntries.map(
-        (entry) => `- ${entry.severity}: ${entry.description}`,
-      ),
-      ``,
-      `Secrets are intentionally excluded from this export.`,
-    ].join("\n");
-
-    const blob = new Blob([report], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${result.sessionId.toLowerCase()}-report.txt`;
-    document.body.append(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
-  };
-
-  const downloadPdfReport = async () => {
-    if (!result || !submittedConfig || isDownloadingPdf) {
-      return;
-    }
-
-    setIsDownloadingPdf(true);
-
-    try {
-      const { downloadAuditPdfReport } = await import(
-        "@/lib/client/audit-pdf"
-      );
-
-      await downloadAuditPdfReport({
-        config: submittedConfig,
-        result,
-      });
-    } catch {
-      setResultNotice({
-        tone: "warning",
-        title: "PDF EXPORT UNAVAILABLE",
-        body: "The PDF report could not be generated for this session. The text export is still available and no secrets were exposed.",
-      });
-    } finally {
-      setIsDownloadingPdf(false);
-    }
   };
 
   const handleClearHistory = () => {
@@ -779,13 +680,10 @@ export function AuditWorkbench({
 
       <div className="space-y-6">
         {phase === "results" && result && submittedConfig ? (
-          <AuditResultsDashboard
+          <AuditResultsSimplified
             result={result}
             config={submittedConfig}
-            isDownloadingPdf={isDownloadingPdf}
-            onDownloadPdf={downloadPdfReport}
             notice={resultNotice}
-            onExport={exportReport}
             onRunAnother={resetToConfigure}
           />
         ) : (
@@ -946,6 +844,15 @@ function LivePanel({
   activeStageIndex: number;
 }) {
   const preset = industryPresets.find((item) => item.id === industry)!;
+  const [messageIndex, setMessageIndex] = useState(0);
+
+  useEffect(() => {
+    if (phase !== "scanning") return;
+    const timer = window.setInterval(() => {
+      setMessageIndex((i) => (i + 1) % attackMessages.length);
+    }, 1400);
+    return () => window.clearInterval(timer);
+  }, [phase]);
 
   return (
     <section className="rounded-[2rem] border border-white/10 bg-slate-950/70 p-6 shadow-[0_30px_80px_rgba(2,6,23,0.55)] backdrop-blur sm:p-8">
@@ -954,27 +861,55 @@ function LivePanel({
           {phase === "scanning" ? "Live scan" : "Session preview"}
         </p>
         <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-white">
-          {phase === "scanning"
-            ? scanStages[activeStageIndex]?.title
-            : "Audit snapshot"}
+          {phase === "scanning" ? "Adversarial audit in progress" : "Audit snapshot"}
         </h2>
         <p className="mt-3 text-sm leading-6 text-slate-400">
           {phase === "scanning"
-            ? scanStages[activeStageIndex]?.detail
+            ? `Testing ${preset.label} endpoint for hidden vulnerabilities.`
             : "Review scope, route, and policy before launch."}
         </p>
       </div>
 
       {phase === "scanning" ? (
-        <div className="mt-6 space-y-6">
-          <div className="rounded-[1.5rem] border border-cyan-300/20 bg-cyan-300/10 p-5">
-            <div className="flex items-center justify-between gap-4">
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cyan-50">
-                Scan progress
-              </p>
-              <p className="font-mono text-sm text-cyan-100">{progress}%</p>
+        <div className="mt-6 flex flex-col items-center gap-8">
+          {/* Pulsing orb */}
+          <div className="relative flex size-52 items-center justify-center">
+            <span
+              aria-hidden="true"
+              className="absolute inset-0 rounded-full border border-cyan-300/10 animate-ping [animation-duration:3s]"
+            />
+            <span
+              aria-hidden="true"
+              className="absolute inset-6 rounded-full border border-cyan-300/15 animate-pulse [animation-duration:2s]"
+            />
+            <span
+              aria-hidden="true"
+              className="absolute inset-12 rounded-full border border-cyan-200/20"
+            />
+            <span
+              aria-hidden="true"
+              className="absolute inset-0 rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.11),transparent_62%)]"
+            />
+            <span className="relative size-10 rotate-45 rounded-[10px] border border-cyan-100/60 bg-cyan-200/80 shadow-[0_0_40px_rgba(103,232,249,0.55)]" />
+          </div>
+
+          {/* Rotating attack message */}
+          <div className="text-center">
+            <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-cyan-300/70">
+              Attack vector active
+            </p>
+            <p className="mt-2 font-mono text-sm text-slate-200 transition-opacity duration-300">
+              {attackMessages[messageIndex]}
+            </p>
+          </div>
+
+          {/* Progress bar */}
+          <div className="w-full space-y-3">
+            <div className="flex justify-between text-xs text-slate-500">
+              <span className="uppercase tracking-[0.2em]">Scan progress</span>
+              <span className="font-mono text-cyan-300">{progress}%</span>
             </div>
-            <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
+            <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
               <div
                 className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-teal-200 to-cyan-100 transition-[width] duration-300"
                 style={{ width: `${progress}%` }}
@@ -982,48 +917,32 @@ function LivePanel({
             </div>
           </div>
 
-          <div className="space-y-3">
-            {scanStages.map((stage, index) => {
-              const completed = progress >= ((index + 1) / scanStages.length) * 100;
-              const current = index === activeStageIndex;
-
-              return (
-                <div
-                  key={stage.title}
-                  className={cn(
-                    "rounded-[1.3rem] border p-4 transition duration-300",
-                    current
-                      ? "border-cyan-300/30 bg-cyan-300/10"
-                      : completed
-                        ? "border-emerald-300/20 bg-emerald-300/10"
-                        : "border-white/10 bg-white/[0.03]",
-                  )}
-                >
-                  <div className="flex items-start gap-3">
-                    <span
-                      className={cn(
-                        "mt-1 inline-flex size-6 items-center justify-center rounded-full border text-[11px] font-semibold",
-                        current
-                          ? "border-cyan-200/40 bg-cyan-200/90 text-slate-950"
-                          : completed
-                            ? "border-emerald-200/40 bg-emerald-200/90 text-slate-950"
-                            : "border-white/15 text-slate-500",
-                      )}
-                    >
-                      {completed ? "✓" : index + 1}
-                    </span>
-                    <div>
-                      <p className="text-sm font-semibold uppercase tracking-[0.18em] text-white">
-                        {stage.title}
-                      </p>
-                      <p className="mt-2 text-sm leading-6 text-slate-400">
-                        {stage.detail}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+          {/* Stage indicators */}
+          <div className="w-full space-y-3">
+            <div className="flex gap-1.5">
+              {scanStages.map((stage, index) => {
+                const done =
+                  progress >= ((index + 1) / scanStages.length) * 100;
+                const active = index === activeStageIndex;
+                return (
+                  <div
+                    key={stage.title}
+                    title={stage.title}
+                    className={cn(
+                      "h-1 flex-1 rounded-full transition-all duration-500",
+                      done
+                        ? "bg-emerald-300"
+                        : active
+                          ? "animate-pulse bg-cyan-300"
+                          : "bg-white/10",
+                    )}
+                  />
+                );
+              })}
+            </div>
+            <p className="text-center font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
+              {scanStages[activeStageIndex]?.title}
+            </p>
           </div>
         </div>
       ) : (
