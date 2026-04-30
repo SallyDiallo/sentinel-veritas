@@ -1,78 +1,102 @@
+import { PrimaryLinkButton, SecondaryLinkButton } from "@/components/site/action-buttons";
+import { BrandLink } from "@/components/site/brand-link";
+import { HeroLogoDisplay } from "@/components/site/hero-logo-display";
+import {
+  AnimatedCounter,
+  ParallaxGlow,
+  Reveal,
+  StaggerGroup,
+  StaggerItem,
+} from "@/components/site/motion-system";
+
+const trustBadges = [
+  "Secure server-side API execution",
+  "API keys are never stored or exposed",
+  "Simulates real-world adversarial attacks",
+];
+
+const whatItDoes = [
+  {
+    title: "Finds hidden prompt attacks",
+    description:
+      "Catches hidden instructions before they can redirect model behavior.",
+  },
+  {
+    title: "Tests encoded payloads",
+    description:
+      "Replays Base64, metadata, and obfuscated payloads against your filters.",
+  },
+  {
+    title: "Detects policy leakage",
+    description:
+      "Checks whether assistants leak hidden rules, prompts, or internal policy.",
+  },
+  {
+    title: "Generates remediation reports",
+    description:
+      "Turns results into an executive-ready report with evidence and next steps.",
+  },
+];
+
 const threatCategories = [
   {
     title: "Visual Prompt Injection",
-    description:
-      "Detect malicious instructions embedded in screenshots, charts, UI captures, and image layers before they reach your agent.",
+    description: "Screens images and screenshots for hidden instructions.",
   },
   {
     title: "Encoded Payload Attacks",
-    description:
-      "Unpack base64, homoglyphs, metadata, and hidden text carriers designed to slip past policy and retrieval layers.",
+    description: "Tests Base64, homoglyph, metadata, and hidden text payloads.",
   },
   {
     title: "OCR Hidden Commands",
-    description:
-      "Surface low-contrast, off-canvas, and steganographic directives that OCR and vision models can still interpret.",
+    description: "Finds low-contrast or off-canvas instructions OCR can still read.",
   },
   {
     title: "Adversarial Noise Inputs",
-    description:
-      "Stress-test noisy images and distorted multimodal inputs that can bend model reasoning under uncertainty.",
+    description: "Measures how noisy or distorted inputs affect safety behavior.",
   },
 ];
 
 const workflowSteps = [
   {
     step: "01",
-    title: "Upload Input",
-    description:
-      "Submit images, documents, prompts, or mixed media flows from the AI system you want to validate.",
+    title: "Connect API",
+    description: "Choose an industry profile, endpoint, and policy rules.",
   },
   {
     step: "02",
     title: "Run Scan",
-    description:
-      "Sentinel Veritas probes every modality with adversarial payloads, OCR traps, and encoded command patterns.",
+    description: "Launch 12 adversarial checks across four threat classes.",
   },
   {
     step: "03",
     title: "Get Vulnerability Report",
-    description:
-      "Receive an executive-ready report with exploit paths, severity, remediation notes, and audit evidence.",
+    description: "Review severity, evidence, and remediation in one report.",
   },
 ];
 
 const stats = [
   {
     value: "93%",
+    countValue: 93,
+    suffix: "%",
     label: "hidden attack detection rate",
   },
   {
     value: "<2 sec",
+    countValue: 2,
+    prefix: "<",
     label: "scan time",
   },
   {
     value: "4",
+    countValue: 4,
     label: "threat classes analyzed",
   },
   {
     value: "Ready",
     label: "Enterprise-ready reporting",
   },
-];
-
-const signalRings = [
-  "inset-0 border-cyan-300/10",
-  "inset-[12%] border-teal-300/15",
-  "inset-[24%] border-sky-300/10",
-  "inset-[36%] border-white/10",
-];
-
-const signalPoints = [
-  "left-[18%] top-[24%] bg-cyan-300",
-  "right-[18%] top-[34%] bg-teal-300",
-  "left-[28%] bottom-[20%] bg-sky-300",
-  "right-[30%] bottom-[26%] bg-emerald-300",
 ];
 
 function Header() {
@@ -82,27 +106,20 @@ function Header() {
         aria-label="Primary navigation"
         className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 sm:px-8 lg:px-10"
       >
-        <a href="#" className="group flex items-center gap-3">
-          <span className="relative flex size-10 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 shadow-[0_0_32px_rgba(34,211,238,0.18)] transition duration-300 group-hover:border-cyan-200/50 group-hover:bg-cyan-200/15">
-            <span className="size-3 rotate-45 rounded-[3px] border border-cyan-100 bg-cyan-200/80" />
-          </span>
-          <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-100 sm:text-sm sm:tracking-[0.28em]">
-            Sentinel Veritas
-          </span>
-        </a>
+        <BrandLink href="/" />
 
         <div className="hidden items-center gap-8 text-sm text-slate-400 md:flex">
           <a
-            href="#threats"
+            href="#what-it-does"
             className="transition duration-300 hover:text-slate-100"
           >
-            Threats
+            What it does
           </a>
           <a
-            href="#process"
+            href="#sample-report"
             className="transition duration-300 hover:text-slate-100"
           >
-            Process
+            Sample report
           </a>
           <a
             href="#trust"
@@ -113,38 +130,6 @@ function Header() {
         </div>
       </nav>
     </header>
-  );
-}
-
-function SecuritySignal() {
-  return (
-    <div
-      className="relative mx-auto aspect-square w-full max-w-[560px]"
-      aria-hidden="true"
-    >
-      <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,rgba(45,212,191,0.15),transparent_62%)] blur-3xl" />
-      <div className="absolute inset-[6%] rounded-full border border-cyan-300/10 bg-slate-950/40 shadow-[inset_0_0_80px_rgba(8,47,73,0.55),0_0_90px_rgba(45,212,191,0.12)] backdrop-blur">
-        {signalRings.map((ring) => (
-          <span
-            key={ring}
-            className={`absolute rounded-full border ${ring}`}
-          />
-        ))}
-        <span className="absolute left-1/2 top-[8%] h-[84%] w-px origin-center -translate-x-1/2 rotate-45 bg-gradient-to-b from-cyan-300/0 via-cyan-200/70 to-cyan-300/0 shadow-[0_0_26px_rgba(103,232,249,0.65)] motion-safe:animate-pulse" />
-        <span className="absolute left-1/2 top-1/2 size-24 -translate-x-1/2 -translate-y-1/2 rounded-[2rem] border border-cyan-200/25 bg-cyan-300/10 shadow-[0_0_48px_rgba(45,212,191,0.25)]" />
-        <span className="absolute left-1/2 top-1/2 size-10 -translate-x-1/2 -translate-y-1/2 rotate-45 rounded-lg border border-cyan-100/60 bg-cyan-200/80" />
-        {signalPoints.map((point) => (
-          <span
-            key={point}
-            className={`absolute size-2 rounded-full shadow-[0_0_26px_currentColor] ${point}`}
-          />
-        ))}
-      </div>
-      <div className="absolute bottom-8 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-full border border-white/10 bg-black/40 px-4 py-2 text-xs font-medium uppercase tracking-[0.22em] text-cyan-100 shadow-2xl shadow-cyan-950/40 backdrop-blur">
-        <span className="size-2 rounded-full bg-emerald-300 shadow-[0_0_16px_rgba(110,231,183,0.75)]" />
-        Multimodal scan active
-      </div>
-    </div>
   );
 }
 
@@ -165,10 +150,43 @@ function SectionHeader({
       <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-white sm:text-5xl">
         {title}
       </h2>
-      <p className="mt-5 text-base leading-8 text-slate-400 sm:text-lg">
+      <p className="mx-auto mt-5 max-w-2xl text-sm leading-6 text-slate-400 sm:text-base">
         {description}
       </p>
     </div>
+  );
+}
+
+function BadgeStrip({ items }: { items: string[] }) {
+  return (
+    <div className="mt-8 flex flex-wrap gap-3">
+      {items.map((item) => (
+        <span
+          key={item}
+          className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-sm text-slate-200 shadow-[0_10px_30px_rgba(2,6,23,0.22)] backdrop-blur"
+        >
+          <span className="size-2 rounded-full bg-cyan-300 shadow-[0_0_16px_rgba(103,232,249,0.8)]" />
+          {item}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function PlainLanguageCard({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) {
+  return (
+    <article className="rounded-[1.8rem] border border-white/10 bg-white/[0.035] p-6 transition duration-500 hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-cyan-300/[0.06]">
+      <h3 className="text-xl font-semibold tracking-[-0.03em] text-white">
+        {title}
+      </h3>
+      <p className="mt-3 text-sm leading-6 text-slate-400">{description}</p>
+    </article>
   );
 }
 
@@ -188,7 +206,7 @@ function ThreatCard({
       <h3 className="mt-8 text-xl font-semibold tracking-[-0.02em] text-white">
         {title}
       </h3>
-      <p className="mt-4 text-sm leading-7 text-slate-400">{description}</p>
+      <p className="mt-3 text-sm leading-6 text-slate-400">{description}</p>
     </article>
   );
 }
@@ -210,16 +228,36 @@ function WorkflowStep({
       <h3 className="mt-8 text-2xl font-semibold tracking-[-0.03em] text-white">
         {title}
       </h3>
-      <p className="mt-4 text-sm leading-7 text-slate-400">{description}</p>
+      <p className="mt-3 text-sm leading-6 text-slate-400">{description}</p>
     </article>
   );
 }
 
-function StatBlock({ value, label }: { value: string; label: string }) {
+function StatBlock({
+  value,
+  label,
+  countValue,
+  prefix,
+  suffix,
+}: {
+  value: string;
+  label: string;
+  countValue?: number;
+  prefix?: string;
+  suffix?: string;
+}) {
   return (
     <div className="border-t border-white/10 pt-6">
       <p className="font-mono text-4xl font-semibold tracking-[-0.08em] text-white sm:text-5xl">
-        {value}
+        {typeof countValue === "number" ? (
+          <AnimatedCounter
+            value={countValue}
+            prefix={prefix}
+            suffix={suffix}
+          />
+        ) : (
+          value
+        )}
       </p>
       <p className="mt-3 text-sm uppercase tracking-[0.18em] text-slate-400">
         {label}
@@ -228,40 +266,117 @@ function StatBlock({ value, label }: { value: string; label: string }) {
   );
 }
 
-function PrimaryButton({
-  href,
-  children,
-}: {
-  href: string;
-  children: React.ReactNode;
-}) {
+function SampleReportCard() {
+  const topFindings = [
+    "Prompt injection reached trusted instructions.",
+    "Encoded payloads crossed parser boundaries.",
+    "Refusal behavior weakened under extraction pressure.",
+  ];
+  const businessImpacts = [
+    "Customer data exposure",
+    "Unsafe automated decisions",
+    "Document intake manipulation",
+  ];
+
   return (
-    <a
-      href={href}
-      className="group inline-flex h-[3.25rem] items-center justify-center rounded-full bg-cyan-200 px-7 text-sm font-semibold text-slate-950 shadow-[0_0_40px_rgba(103,232,249,0.22)] transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_0_60px_rgba(103,232,249,0.34)] focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:ring-offset-2 focus:ring-offset-slate-950"
-    >
-      {children}
-      <span className="ml-2 transition duration-300 group-hover:translate-x-1">
-        -&gt;
-      </span>
-    </a>
+    <div className="rounded-[2rem] border border-cyan-300/20 bg-slate-950/80 p-6 shadow-[0_30px_80px_rgba(2,6,23,0.55)] backdrop-blur sm:p-8">
+      <div className="flex flex-col gap-4 border-b border-white/10 pb-6 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p className="font-mono text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">
+            Sample report preview
+          </p>
+          <h3 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-white">
+            Executive-ready output in one scan
+          </h3>
+        </div>
+        <span className="inline-flex self-start rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-semibold text-cyan-100">
+          Live OpenAI Audit Mode
+        </span>
+      </div>
+
+      <StaggerGroup className="mt-6 grid gap-4 sm:grid-cols-3" stagger={0.1}>
+        <StaggerItem>
+          <ReportMetric value="74" label="Vulnerability Index" countValue={74} />
+        </StaggerItem>
+        <StaggerItem>
+          <ReportMetric value="High" label="Overall Severity" />
+        </StaggerItem>
+        <StaggerItem>
+          <ReportMetric value="12" label="Tests Executed" countValue={12} />
+        </StaggerItem>
+      </StaggerGroup>
+
+      <div className="mt-6 rounded-[1.4rem] border border-white/10 bg-white/[0.03] p-5">
+        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-200">
+          Executive summary
+        </p>
+        <p className="mt-3 text-sm leading-6 text-slate-200">
+          Multiple weaknesses could let hidden instructions or encoded payloads alter production behavior.
+        </p>
+      </div>
+
+      <div className="mt-6 grid gap-4 lg:grid-cols-2">
+        <div className="rounded-[1.4rem] border border-white/10 bg-white/[0.03] p-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-200">
+            Top findings
+          </p>
+          <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-300">
+            {topFindings.map((item) => (
+              <li key={item} className="flex gap-3">
+                <span className="mt-2 size-1.5 rounded-full bg-cyan-300" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="rounded-[1.4rem] border border-white/10 bg-white/[0.03] p-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-200">
+            Business impact
+          </p>
+          <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-300">
+            {businessImpacts.map((item) => (
+              <li key={item} className="flex gap-3">
+                <span className="mt-2 size-1.5 rounded-full bg-teal-300" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
   );
 }
 
-function SecondaryButton({
-  href,
-  children,
+function ReportMetric({
+  value,
+  label,
+  countValue,
+  suffix,
+  prefix,
 }: {
-  href: string;
-  children: React.ReactNode;
+  value: string;
+  label: string;
+  countValue?: number;
+  suffix?: string;
+  prefix?: string;
 }) {
   return (
-    <a
-      href={href}
-      className="inline-flex h-[3.25rem] items-center justify-center rounded-full border border-white/15 px-7 text-sm font-semibold text-slate-100 transition duration-300 hover:-translate-y-0.5 hover:border-cyan-200/50 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:ring-offset-2 focus:ring-offset-slate-950"
-    >
-      {children}
-    </a>
+    <div className="rounded-[1.3rem] border border-white/10 bg-white/[0.03] p-4">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+        {label}
+      </p>
+      <p className="mt-3 font-mono text-3xl font-semibold tracking-[-0.06em] text-white">
+        {typeof countValue === "number" ? (
+          <AnimatedCounter
+            value={countValue}
+            prefix={prefix}
+            suffix={suffix}
+          />
+        ) : (
+          value
+        )}
+      </p>
+    </div>
   );
 }
 
@@ -271,113 +386,179 @@ export default function Home() {
       <div className="relative isolate">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_16%_20%,rgba(34,211,238,0.16),transparent_30%),radial-gradient(circle_at_82%_14%,rgba(45,212,191,0.13),transparent_28%),linear-gradient(135deg,#020617_0%,#07111f_45%,#020617_100%)]" />
         <div className="absolute inset-0 -z-10 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] [background-size:72px_72px] [mask-image:linear-gradient(to_bottom,black,transparent_82%)]" />
+        <ParallaxGlow className="absolute -left-12 top-20 -z-10 h-72 w-72 rounded-full bg-cyan-300/10 blur-3xl" yDistance={110} xDistance={22} scaleTo={1.22} />
+        <ParallaxGlow className="absolute right-0 top-32 -z-10 h-96 w-96 rounded-full bg-teal-300/10 blur-3xl" yDistance={150} xDistance={-28} scaleTo={1.14} />
         <Header />
 
-        <section className="relative flex min-h-screen items-center px-6 pb-20 pt-32 sm:px-8 lg:px-10">
+        <section className="relative flex min-h-screen items-center px-6 pb-24 pt-36 sm:px-8 lg:px-10">
           <div className="mx-auto grid w-full max-w-7xl items-center gap-16 lg:grid-cols-[1.02fr_0.98fr]">
-            <div className="max-w-3xl">
+            <Reveal className="max-w-3xl" duration={0.6}>
               <p className="inline-flex items-center gap-3 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 font-mono text-xs font-semibold uppercase tracking-[0.22em] text-cyan-200">
                 <span className="size-1.5 rounded-full bg-cyan-200 shadow-[0_0_16px_rgba(103,232,249,0.8)]" />
                 AI security audit platform
               </p>
-              <h1 className="mt-8 max-w-5xl text-4xl font-semibold leading-[0.92] tracking-[-0.07em] text-white sm:text-7xl lg:text-[6.5rem]">
-                Your AI Is Under Attack. Know Before They Do.
+              <h1 className="mt-8 max-w-5xl text-[2.65rem] font-semibold leading-[0.94] tracking-[-0.065em] text-white sm:text-7xl lg:text-[6.25rem]">
+                Stress-test your AI before attackers do.
               </h1>
-              <p className="mt-8 max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">
-                Sentinel Veritas reveals hidden vulnerabilities in multimodal AI
-                systems before attackers exploit them.
+              <p className="mt-6 max-w-2xl text-lg font-light leading-8 text-slate-300/90 sm:text-2xl sm:leading-9">
+                As AI evolves, so do the attacks designed to exploit it.
+              </p>
+              <p className="mt-7 max-w-2xl text-base leading-7 text-slate-400 sm:text-lg sm:leading-8">
+                Sentinel Veritas runs adversarial probes for prompt injection,
+                hidden OCR commands, encoded payloads, and policy leakage, then
+                hands you an executive-ready vulnerability report.
               </p>
               <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-                <PrimaryButton href="#secure">Start Audit</PrimaryButton>
-                <SecondaryButton href="#process">View Demo</SecondaryButton>
+                <PrimaryLinkButton href="/audit">
+                  Run Live Audit
+                </PrimaryLinkButton>
+                <SecondaryLinkButton href="/audit?preset=healthcare-judge">
+                  Try Healthcare Audit
+                </SecondaryLinkButton>
+                <SecondaryLinkButton href="/#sample-report">
+                  View Sample Report
+                </SecondaryLinkButton>
               </div>
-            </div>
+              <BadgeStrip items={trustBadges} />
+            </Reveal>
 
-            <SecuritySignal />
+            <Reveal delay={0.1} duration={0.65}>
+              <HeroLogoDisplay />
+            </Reveal>
           </div>
         </section>
       </div>
 
       <section
-        id="threats"
-        className="relative border-t border-white/10 bg-slate-950 px-6 py-24 sm:px-8 lg:px-10 lg:py-32"
+        id="what-it-does"
+        className="relative border-t border-white/10 bg-[#030712] px-6 py-28 sm:px-8 lg:px-10 lg:py-36"
       >
-        <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-cyan-300/10 to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,211,238,0.1),transparent_36%)]" />
+        <ParallaxGlow className="absolute right-[12%] top-10 h-56 w-56 rounded-full bg-cyan-300/6 blur-3xl" yDistance={90} xDistance={18} scaleTo={1.18} />
         <div className="relative mx-auto max-w-7xl">
-          <SectionHeader
-            eyebrow="Threat intelligence"
-            title="Expose the attacks your models are not trained to see."
-            description="Sentinel Veritas audits the full input surface where multimodal AI systems are most likely to trust hostile content."
-          />
-          <div className="mt-16 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {threatCategories.map((threat, index) => (
-              <ThreatCard
-                key={threat.title}
-                index={index}
-                title={threat.title}
-                description={threat.description}
-              />
+          <Reveal>
+            <SectionHeader
+              eyebrow="What it does"
+              title="What the product does in one pass."
+              description="Point Sentinel Veritas at an AI API, run adversarial checks, and get a report with evidence and next actions."
+            />
+          </Reveal>
+          <StaggerGroup className="mt-16 grid gap-5 md:grid-cols-2 xl:grid-cols-4" stagger={0.1}>
+            {whatItDoes.map((item) => (
+              <StaggerItem key={item.title}>
+                <PlainLanguageCard
+                  title={item.title}
+                  description={item.description}
+                />
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerGroup>
         </div>
       </section>
 
       <section
-        id="process"
-        className="relative bg-[#030712] px-6 py-24 sm:px-8 lg:px-10 lg:py-32"
+        id="threats"
+        className="relative border-t border-white/10 bg-slate-950 px-6 py-28 sm:px-8 lg:px-10 lg:py-36"
+      >
+        <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-cyan-300/10 to-transparent" />
+        <ParallaxGlow className="absolute left-[8%] top-16 h-52 w-52 rounded-full bg-teal-300/7 blur-3xl" yDistance={100} xDistance={-16} scaleTo={1.16} />
+        <div className="relative mx-auto max-w-7xl">
+          <Reveal>
+            <SectionHeader
+              eyebrow="Threat intelligence"
+              title="Four attack surfaces. One clear report."
+              description="The audit focuses on multimodal paths where production systems most often trust hostile content."
+            />
+          </Reveal>
+          <StaggerGroup className="mt-16 grid gap-5 md:grid-cols-2 xl:grid-cols-4" stagger={0.1}>
+            {threatCategories.map((threat, index) => (
+              <StaggerItem key={threat.title}>
+                <ThreatCard
+                  index={index}
+                  title={threat.title}
+                  description={threat.description}
+                />
+              </StaggerItem>
+            ))}
+          </StaggerGroup>
+        </div>
+      </section>
+
+      <section
+        id="sample-report"
+        className="relative bg-[#030712] px-6 py-28 sm:px-8 lg:px-10 lg:py-36"
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(14,165,233,0.12),transparent_36%)]" />
+        <ParallaxGlow className="absolute right-[10%] top-20 h-64 w-64 rounded-full bg-sky-300/7 blur-3xl" yDistance={120} xDistance={18} scaleTo={1.18} />
         <div className="relative mx-auto max-w-7xl">
-          <SectionHeader
-            eyebrow="How it works"
-            title="From raw input to board-ready evidence in minutes."
-            description="A simple audit flow for red teams, AI platform teams, and security leaders validating multimodal defenses."
-          />
-          <div className="relative mt-16 grid gap-6 lg:grid-cols-3">
-            <div className="absolute left-0 right-0 top-12 hidden h-px bg-gradient-to-r from-transparent via-cyan-300/30 to-transparent lg:block" />
-            {workflowSteps.map((step) => (
-              <WorkflowStep
-                key={step.title}
-                step={step.step}
-                title={step.title}
-                description={step.description}
-              />
-            ))}
+          <Reveal>
+            <SectionHeader
+              eyebrow="Sample report"
+              title="See the output before the pitch."
+              description="The product should read clearly even before a live walkthrough."
+            />
+          </Reveal>
+          <div className="mt-16 grid gap-8 xl:grid-cols-[0.78fr_1.22fr]">
+            <StaggerGroup
+              className="relative grid gap-6 lg:grid-cols-3 xl:grid-cols-1"
+              stagger={0.1}
+            >
+              <div className="absolute left-0 right-0 top-12 hidden h-px bg-gradient-to-r from-transparent via-cyan-300/30 to-transparent lg:block xl:hidden" />
+              {workflowSteps.map((step) => (
+                <StaggerItem key={step.title}>
+                  <WorkflowStep
+                    step={step.step}
+                    title={step.title}
+                    description={step.description}
+                  />
+                </StaggerItem>
+              ))}
+            </StaggerGroup>
+            <Reveal delay={0.08}>
+              <SampleReportCard />
+            </Reveal>
           </div>
         </div>
       </section>
 
       <section
         id="trust"
-        className="border-y border-white/10 bg-slate-950 px-6 py-20 sm:px-8 lg:px-10"
+        className="border-y border-white/10 bg-slate-950 px-6 py-24 sm:px-8 lg:px-10"
       >
         <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
-          <div>
-            <p className="font-mono text-xs font-semibold uppercase tracking-[0.32em] text-cyan-300">
-              Audit confidence
-            </p>
-            <h2 className="mt-4 max-w-2xl text-3xl font-semibold tracking-[-0.04em] text-white sm:text-5xl">
-              Built for high-stakes AI systems before production exposure.
-            </h2>
-          </div>
-          <div className="grid gap-8 sm:grid-cols-2">
+          <Reveal>
+            <div>
+              <p className="font-mono text-xs font-semibold uppercase tracking-[0.32em] text-cyan-300">
+                Audit confidence
+              </p>
+              <h2 className="mt-4 max-w-2xl text-3xl font-semibold tracking-[-0.04em] text-white sm:text-5xl">
+                Built for high-stakes AI systems before production.
+              </h2>
+            </div>
+          </Reveal>
+          <StaggerGroup className="grid gap-8 sm:grid-cols-2" stagger={0.12}>
             {stats.map((stat) => (
-              <StatBlock
-                key={stat.label}
-                value={stat.value}
-                label={stat.label}
-              />
+              <StaggerItem key={stat.label}>
+                <StatBlock
+                  value={stat.value}
+                  countValue={stat.countValue}
+                  prefix={stat.prefix}
+                  suffix={stat.suffix}
+                  label={stat.label}
+                />
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerGroup>
         </div>
       </section>
 
       <section
         id="secure"
-        className="relative overflow-hidden bg-[#020617] px-6 py-24 sm:px-8 lg:px-10 lg:py-32"
+        className="relative overflow-hidden bg-[#020617] px-6 py-28 sm:px-8 lg:px-10 lg:py-36"
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(45,212,191,0.16),transparent_38%)]" />
-        <div className="relative mx-auto max-w-4xl text-center">
+        <ParallaxGlow className="absolute left-1/2 top-12 h-72 w-72 -translate-x-1/2 rounded-full bg-teal-300/8 blur-3xl" yDistance={100} xDistance={0} scaleTo={1.2} />
+        <Reveal className="relative mx-auto max-w-4xl text-center">
           <p className="font-mono text-xs font-semibold uppercase tracking-[0.32em] text-cyan-300">
             Deploy with certainty
           </p>
@@ -385,15 +566,13 @@ export default function Home() {
             Secure Your AI Stack Today
           </h2>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-            Run adversarial audits across visual, encoded, OCR, and noisy input
-            threats before they become incidents.
+            Connect an endpoint, run adversarial audits, and surface exploit
+            paths before they become production incidents.
           </p>
           <div className="mt-10 flex justify-center">
-            <PrimaryButton href="mailto:security@sentinelveritas.ai">
-              Start Audit
-            </PrimaryButton>
+            <PrimaryLinkButton href="/audit">Run Live Audit</PrimaryLinkButton>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       <footer className="border-t border-white/10 bg-slate-950 px-6 py-8 sm:px-8 lg:px-10">
